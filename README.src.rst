@@ -33,10 +33,18 @@ The SkyWater Open Source PDK documentation can be found at <https://skywater-pdk
    :target: https://github.com/google/skywater-pdk
    :width: 80%
 
-.. include:: docs/common.inc
 .. include:: docs/status.rst
 
 See both the :ref:`Known Issues` section and the `SkyWater PDK GitHub issue list <https://github.com/google/skywater-pdk/issues>`_ to get more detailed information around currently known issues.
+
+Resources
+=========
+
+The latest SkyWater SKY130 PDK design resources can be viewed at the following locations:
+
+* `On Github @ google/skywater-pdk <https://github.com/google/skywater-pdk>`_
+* `Google CodeSearch interface @ https://cs.opensource.google/skywater-pdk <https://cs.opensource.google/skywater-pdk>`_
+* `foss-eda-tools.googlesource.com/skywater-pdk <https://foss-eda-tools.googlesource.com/skywater-pdk/>`_
 
 SKY130 Process Node
 ===================
@@ -56,7 +64,7 @@ The SKY130 Process node technology stack consists of;
 * HV extended-drain NMOS and PMOS
 
 
-The `SKY130 Process Node`_ has is a extremely flexible offering, including many normally *optional* features as standard (feature like the local interconnect, SONOS functionality, MiM capacitors and more). This provides the designer with a **wide range** of flexibility in design choices.
+The `SKY130 Process Node`_ is an extremely flexible offering, including many normally *optional* features as standard (features like the local interconnect, SONOS functionality, MiM capacitors, and more). This provides the designer with a **wide range** of flexibility in design choices.
 
 If your needs extend beyond the standard included functionality in the `SKY130 Process Node`_, please see `Contacting SkyWater`_ as they specializes in enabling production volume of process customization include `the addition of specialized materials like Nb, Ge, V2O5, Carbon Nanotubes <https://www.skywatertechnology.com/technology/>`_. Google and SkyWater continuing to explore new options to be included in the `SkyWater Open Source PDK`_ and `SKY130 Process Node`_ that enable new innovative solutions to traditional design problems.
 
@@ -93,6 +101,16 @@ The SkyWater Open Source PDK aims to contain comprehensive documentation about u
 * `[TODO #13] <https://github.com/google/skywater-pdk/issues/13>`_ - Examples of using the PDK with `analog generators <https://skywater-pdk.rtfd.io>`_ like `FASoC <https://fasoc.engin.umich.edu/>`_ and `Berkeley Analog Generator (BAG) <https://github.com/bluecheetah/bag>`_.
 
 We are excited to see additions to this documentation around using this design kit with new tools and design flows. Please see the `Contributing file <docs/contributing.rst>`_ for information on how to do this.
+
+To download or update to the 'latest' version of all standard cell libraries, and to regenerate the liberty files, clone this repository and run the following commands.
+
+.. code:: bash
+
+   # Expect a large download! ~7GB at time of writing.
+   SUBMODULE_VERSION=latest make submodules -j3 || make submodules -j1
+
+   # Regenerate liberty files
+   make timing
 
 Support
 =======

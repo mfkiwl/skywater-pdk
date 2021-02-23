@@ -26,6 +26,10 @@
   description: "This issue is suitable for a new person who has never contributed to the PDK before."
   color: "5cafc4" # weird blue
 
+- name: "in-progress"
+  description: "This issue has someone already working on solving it and has made substantial progress."
+  color: "ff0010" # bright red
+
 # Labels related to type of GitHub issue
 - name: "type-bug"
   description: "Something isn't working"
@@ -52,6 +56,10 @@
 #
 # File related labels are colored purple: d61dae
 ##########################################################################
+
+- name: "files-build"
+  description: "Issues related to the Makefiles / build infrastructure."
+  color: "d61dae"
 
 - name: "files-definition"
   description: "Issues related to the definition.json provided for each cell."
@@ -144,16 +152,8 @@
   color: "c5d53c"
 
 # Primitives
-- name: "lib-sky130_fd_pr_base"
+- name: "lib-sky130_fd_pr"
   description: "Issues with the base primitive cells provided by the SkyWater foundry."
-  color: "c5d53c"
-
-- name: "lib-sky130_fd_pr_rf"
-  description: "Issues with the rf primitive cells provided by the SkyWater foundry."
-  color: "c5d53c"
-
-- name: "lib-sky130_fd_pr_rf2"
-  description: "Issues with the rf2 primitive cells provided by the SkyWater foundry."
   color: "c5d53c"
 
 # Standard cells

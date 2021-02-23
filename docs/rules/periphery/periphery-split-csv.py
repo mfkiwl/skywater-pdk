@@ -55,7 +55,7 @@ class Rule:
     description: str = ''
     flags: Tuple[RuleFlags] = field(default_factory=tuple)
     value: str = ''
-
+    unit: str = ''
 
 @dataclass
 class RuleTable:
@@ -75,7 +75,7 @@ class RuleTable:
 
 
 data = [[]]
-for l in open('periphery.csv'):
+for l in open('periphery.csv', encoding='utf8'):
     if '.-)' in l:
         data.append([])
 
@@ -159,10 +159,16 @@ for d in data[1:]:
     rows = rows[i:]
 
     # Strip off the flags table
+    should_strip_flags = False
     for i, r in enumerate(rows):
         if r[0] == 'Use' and r[1] == 'Explanation':
+            should_strip_flags = True
             break
-    rows = rows[:i]
+    if should_strip_flags:
+        rows = rows[:i]
+
+    # Remove rows with Section in the first column
+    rows = [r for r in rows if not r[0].startswith('Section ')]
 
     # Join together description which span multiple rows.
     continued_index = []
@@ -213,7 +219,7 @@ for d in data[1:]:
         rt.enabled = False
 
     for r in rows:
-        assert len(r) == 4, r
+        assert len(r) == 5, r
 
         if r[0] == 'Use' and r[1] == 'Explanation':
             break
@@ -227,6 +233,7 @@ for d in data[1:]:
             r[3] = ''
         rc.flags = tuple(flags)
         rc.value = r[3]
+        rc.unit  = r[4].strip()
         rt.rules.append(rc)
 
     if rule_tables:
@@ -237,7 +244,7 @@ for d in data[1:]:
 
 PERIPHERY_RULES_FILE = os.path.join('..', 'periphery-rules.rst')
 
-rst = open(PERIPHERY_RULES_FILE, 'w')
+rst = open(PERIPHERY_RULES_FILE, 'w', encoding='utf8')
 
 rst.write("""\
 .. Do **not** modify this file it is generated from the periphery.csv file
@@ -248,7 +255,6 @@ rst.write("""\
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :width: 100%
    :widths: 10 75
 
    * - Use
@@ -283,15 +289,14 @@ for rt in rule_tables:
 
 """.format(textwrap.indent(rt.notes, prefix='    ')))
 
-    headers = ('Name', 'Description', 'Flags', 'Value')
-    headers_fmt = (':drc_rule:`Name`', 'Description', ':drc_flag:`Flags`', 'Value')
+    headers = ('Name', 'Description', 'Flags', 'Value', 'Unit')
+    headers_fmt = (':drc_rule:`Name`', 'Description', ':drc_flag:`Flags`', 'Value', 'Unit')
 
     rst.write("""\
 .. list-table:: {rt.description}
    :header-rows: 1
    :stub-columns: 1
-   :width: 100%
-   :widths: 10 75 5 10
+   :widths: 9 73 6 6 6
 
    * - {h}
 """.format(rt=rt,h='\n     - '.join(headers_fmt)))
@@ -299,18 +304,25 @@ for rt in rule_tables:
 
     for r in rt.rules:
         f = ' '.join(':drc_flag:`{}`'.format(f.name) for f in r.flags)
-        d = textwrap.indent(r.description, prefix='        ').strip()
+        if '\\n- ' in r.description: # bullet list description
+            r.description = r.description.replace('\\n- ','\n  - ')
+        elif '\\n' in r.description: # multi line description
+            r.description = '\n'.join( [ '| '+l for l in r.description.split('\\n') ] )
+        else:
+            r.description = r.description.lstrip(' -') # one item bullet list to text
+        d = textwrap.indent(r.description, prefix='       ').strip()
         rst.write("""\
    * - :drc_rule:`{r.name}`
      - {d}
      - {f}
      - {r.value}
+     - {r.unit}
 """.format(r=r, d=d, f=f))
 
     rst.write('\n\n')
 
-    with open(rt.csv_fname, 'w', newline='') as f:
-        w = csv.DictWriter(f, headers)
+    with open(rt.csv_fname, 'w', newline='', encoding='utf8') as f:
+        w = csv.DictWriter(f, headers, lineterminator='\n')
         w.writeheader()
         for r in rt.rules:
             d = {f: getattr(r, f.lower()) for f in headers}
@@ -328,5 +340,6 @@ for rt in rule_tables:
 
 rst.close()
 
-with open(PERIPHERY_RULES_FILE) as f:
+with open(PERIPHERY_RULES_FILE, encoding='utf8') as f:
     print(f.read())
+

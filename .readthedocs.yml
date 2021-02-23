@@ -26,4 +26,9 @@ sphinx:
   configuration: docs/conf.py
 
 conda:
-  environment: environment.yml
+  environment: docs/environment.yml
+
+submodules:
+  include:
+   - libraries/sky130_fd_io/latest
+  recursive: false
